@@ -20,6 +20,7 @@ Buildpacks should generally just work, but many of them make assumptions about t
  * [Clojure](https://github.com/heroku/heroku-buildpack-clojure.git)
  * [Go](https://github.com/kr/heroku-buildpack-go.git)
  * [Dart](https://github.com/igrigorik/heroku-buildpack-dart.git)
+ * [Mono](https://github.com/BenHall/heroku-buildpack-mono)
 
 ## Building Buildstep
 
