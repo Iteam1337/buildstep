@@ -3,7 +3,7 @@ set -e
 
 app_root=/app
 build_root=/build/app
-cache_root=/cache
+cache_root=/cache/app
 buildpack_root=/build/buildpacks
 
 cp -r /app /build
@@ -21,7 +21,18 @@ if [ -n "$BUILDPACK_URL" ]; then
   echo "       Fetching custom buildpack"
   buildpack="$buildpack_root/custom"
   rm -rf "$buildpack"
-  git clone --depth=1 "$BUILDPACK_URL" "$buildpack"
+
+  IFS='#' read url treeish <<< "$BUILDPACK_URL"
+
+  if [ "$treeish" == "" ]; then
+    git clone --depth=1 "$url" "$buildpack" > /dev/null 2>&1
+  else
+    git clone "$url" "$buildpack" > /dev/null 2>&1
+    cd $buildpack
+    git checkout $treeish > /dev/null 2>&1
+    cd $build_root
+  fi
+
   selected_buildpack="$buildpack"
   buildpack_name=$($buildpack/bin/detect "$build_root") && selected_buildpack=$buildpack
 else
@@ -43,7 +54,8 @@ export REQUEST_ID=$(openssl rand -base64 32)
 $selected_buildpack/bin/compile "$build_root" "$cache_root"
 
 echo "-----> Discovering process types"
-$selected_buildpack/bin/release "$app_root" "$cache_root" > /build/app/.release
+
+$selected_buildpack/bin/release "$build_root" > /build/app/.release
 
 if [[ -f "$build_root/Procfile" ]]; then
   types=$(ruby -e "require 'yaml';puts YAML.load_file('$build_root/Procfile').keys().join(', ')")

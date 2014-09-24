@@ -9,8 +9,9 @@ Heroku-style application builds using Docker and Buildpacks. Used by [Dokku](htt
 
 ## Supported Buildpacks
 
-Buildpacks should generally just work, but many of them make assumptions about their environment. So Buildstep has a list of officially supported buildpacks that are built-in and ready to be used.
+Buildpacks should generally just work, but many of them make assumptions about their environment. So Buildstep has a [list of officially supported buildpacks](https://github.com/progrium/buildstep/blob/master/stack/buildpacks.txt) that are built-in and ready to be used.
 
+These are supported by this fork:
  * [Ruby](https://github.com/heroku/heroku-buildpack-ruby)
  * [Node.js](https://github.com/heroku/heroku-buildpack-nodejs)
  * [Java](https://github.com/heroku/heroku-buildpack-java)
@@ -39,6 +40,10 @@ an argument. It will put the application in a new container based on `progrium/b
 Then it runs the builder script inside the container. 
 
     $ cat myapp.tar | ./buildstep myapp
+    
+If you didn't already have an application tar, you can create one on the fly.
+
+    $ tar cC /path/to/your/app . | ./buildstep myapp
 
 The resulting container has a built app ready to go. The builder script also parses the Procfile and produces
 a starter script that takes a process type. Run your app with:
